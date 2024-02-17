@@ -21,57 +21,71 @@ export default class HomeScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            text: "",
             weather: "",
             icon: "",
             iconImage: "",
+            testImage:  require("../assets/weatherIcons/01d.png"),
             weatherIcons: {
                 icon1: require("../assets/weatherIcons/01d.png"),
                 icon2: require("../assets/weatherIcons/02d.png"),
                 icon3: require("../assets/weatherIcons/03d.png"),
                 icon4: require("../assets/weatherIcons/04d.png"),
+                icon9: require("../assets/weatherIcons/09d.png"),
+                icon10: require("../assets/weatherIcons/10d.png"),
+                icon11: require("../assets/weatherIcons/11d.png"),
+                icon13: require("../assets/weatherIcons/13d.png"),
+                icon50: require("../assets/weatherIcons/50d.png"),
             }
         }
     }
 
 
-    fetchAPI = () => {
+    fetchAPI = (location) => {
         axios
-            .get("https://api.openweathermap.org/data/2.5/weather?q=London&units=metric&APPID=143454aa39bbe3442a890cdbf3f9db36")
+            .get(`https://api.openweathermap.org/data/2.5/weather?q=${location ? location : "London"}&units=metric&APPID=143454aa39bbe3442a890cdbf3f9db36`)
             .then(response => {
                 this.setState({ weather : response.data})
                 this.setState({ icon : this.state.weather.weather[0].icon})
+                icon = this.state.icon
+
+
+                if(icon == "01d" || icon == "01n"){
+                    this.setState({ iconImage : this.state.weatherIcons.icon1})
+                }
+                if(icon == "02d" || icon == "02n"){
+                    this.setState({ iconImage : this.state.weatherIcons.icon2})
+                }
+                if(icon == "03d" || icon == "03n"){
+                    this.setState({ iconImage : this.state.weatherIcons.icon3})
+                }
+                if(icon == "04d" || icon == "04n"){
+                    this.setState({ iconImage : this.state.weatherIcons.icon4})
+                }
+                if(icon == "09d" || icon == "09n"){
+                    this.setState({ iconImage : this.state.weatherIcons.icon9})
+                }
+                if(icon == "10d" || icon == "10n"){
+                    this.setState({ iconImage : this.state.weatherIcons.icon10})
+                }
+                if(icon == "11d" || icon == "11n"){
+                    this.setState({ iconImage : this.state.weatherIcons.icon11})
+                }
+                if(icon == "13d" || icon == "13n"){
+                    this.setState({ iconImage : this.state.weatherIcons.icon13})
+                }
+                if(icon == "50d" || icon == "50n"){
+                    this.setState({ iconImage : this.state.weatherIcons.icon50})
+                }
             })
             .catch(error => {
-                Alert.alert(error.message)
+                // Alert.alert(error.message)
             })
-    }
-
-    weatherIconFunc = () => {
-        let icon = this.state.icon
-        let icon1 = this.state.weatherIcons.icon1
-        let icon2 = this.state.weatherIcons.icon2
-        let icon3 = this.state.weatherIcons.icon3
-        let icon4 = this.state.weatherIcons.icon4
-
-        if(icon === "01d") {
-            this.setState({ iconImage : icon1})
-        } else if(icon === "02d"){
-            this.setState({ iconImage : icon2})
-        } else if(icon === "03d"){
-            this.setState({ iconImage : icon3})
-        } else if(icon == "04d"){
-            this.setState({ iconImage : icon4})
-        }
-
-        
     }
 
     componentDidMount() {
         this.fetchAPI()
-        this.weatherIconFunc()
     }
-
-
 
     render() {
         if (Object.keys(this.state.weather).length !== 0) {
@@ -84,10 +98,12 @@ export default class HomeScreen extends Component {
                             <View style={styles.SearchContainer}>
                                 <TextInput style={styles.SearchTextInput}
                                     placeholder='Search a location'
+                                    // onChangeText={newText => this.fetchAPI(newText)}
+                                    onChangeText={newText => this.setState({ text : newText})}
                                 >
                                     {/* <Text>Search a location</Text> */}
                                 </TextInput>
-                                <TouchableOpacity style={styles.searchButton} onPress={() => Alert.alert(this.weather)}
+                                <TouchableOpacity style={styles.searchButton} onPress={() => this.fetchAPI(this.state.text)}
                                 >
                                     <Text style={styles.searchButtonText}>Search</Text>
                                 </TouchableOpacity>
@@ -126,11 +142,12 @@ export default class HomeScreen extends Component {
 
                                 <View style={styles.locationContainer}>
                                     <Text style={{fontSize: 40, color: "white"}}>
-                                        <Image source={require("../assets/mapIcon.png")} style={{height: 30, width: 21}}></Image>
-                                        {this.state.weather.name}
+                                        <Image source={require("../assets/mapIcon.png")} style={{height: 30, width: 21}}></Image>  
+                                        {this.state.weather.name}                                      
                                     </Text>
                                 </View>
                             </View>
+                            {/* <TouchableOpacity style={styles.settingsButton}onPress={() => {this.props.navigation.navigate("IssLocation")}}></TouchableOpacity> */}
                         </ImageBackground>
                     </View>
                 </View>
@@ -233,7 +250,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 30,
     },
+    settingsButton: {
+        height: 50,
+        width: "25%",
+        backgroundColor: "#999999",
 
+    }
 });
 
 
